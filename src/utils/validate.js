@@ -23,3 +23,8 @@ export function validEmail(email) {
   const valid_regex = /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/
   return valid_regex.test(email)
 }
+
+export function validPath(path) {
+  const path_regex = /^(\/[\-a-zA-Z_0-9]+)+$/
+  return path_regex.test(path)
+}

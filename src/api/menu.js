@@ -22,11 +22,18 @@ export function getMenus(params) {
     params
   })
 }
+export function updateMenu(data) {
+  return request({
+    url: '/menu',
+    method: 'put',
+    data
+  })
+}
 
-export function addMenu(params) {
+export function addMenu(data) {
   return request({
     url: '/menu',
     method: 'post',
-    params
+    data
   })
 }

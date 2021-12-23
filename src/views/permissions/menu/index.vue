@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="openMenuDialog ">新增菜单</el-button>
+    <el-button type="primary" @click="openMenuFormDialog('add') ">新增菜单</el-button>
     <el-divider />
     <el-table
       v-loading="tableLoading"
@@ -30,7 +30,7 @@
         label="ICON"
       />
       <el-table-column
-        prop="parentMenu"
+        prop="parentMenuName"
         label="上级菜单"
       />
 
@@ -39,7 +39,8 @@
         label="操作"
       >
         <template slot-scope="scope">
-          <el-button type="primary" size="mini" @click="deleteMenu(scope.row)">删除</el-button>
+          <el-button type="primary" size="mini" @click="openUpdateMenuFormDialog(scope.row)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteMenu(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -47,10 +48,10 @@
     <div class="block">
       <el-pagination
         :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="100"
+        :page-sizes="[5, 10, 20, 30, 40]"
+        :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
+        :total="total"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -60,8 +61,14 @@
       title="提示"
       :visible.sync="menuDialogVisible"
       width="40%"
+      @opened="onMenuFormDialogOpened"
+      @closed="resetMenuForm"
     >
-      <menu-form ref="menuForm" />
+      <menu-form ref="menuForm" :menu-form-type="menuFormType" />
+      <h3 slot="title">
+        <svg-icon icon-class="form" />
+        {{ menuFormType ==='add' ? '添加菜单':'编辑菜单' }}
+      </h3>
       <span slot="footer" class="dialog-footer">
         <el-button @click="menuDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitMenuForm">确 定</el-button>
@@ -81,8 +88,12 @@ export default {
     return {
       menuDialogVisible: false,
       currentPage: 1,
+      pageSize: 10,
+      total: 0,
       tableLoading: false,
-      dataList: []
+      dataList: [],
+      menuFormType: 'add',
+      editedMenu: undefined
     }
   },
   created() {
@@ -91,9 +102,14 @@ export default {
   methods: {
     fetchData() {
       this.tableLoading = true
-      getMenus().then(res => {
+      const params = {
+        pageNum: this.currentPage,
+        pageSize: this.pageSize
+      }
+      getMenus(params).then(res => {
         if (res.code === 20000) {
-          this.dataList = res.data
+          this.dataList = res.data.list
+          this.total = res.data.total
         }
         this.tableLoading = false
       })
@@ -101,24 +117,44 @@ export default {
     editRow(data) {
       console.log(data)
     },
-    addMenu() {
-
-    },
     deleteMenu(data) {
       console.log(data)
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.fetchData()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.fetchData()
     },
-    openMenuDialog() {
+    openMenuFormDialog(menuFormType) {
       this.menuDialogVisible = true
+      this.menuFormType = menuFormType
+    },
+    openUpdateMenuFormDialog(data) {
+      this.editedMenu = data
+      this.openMenuFormDialog('update')
+    },
+    onMenuFormDialogOpened() {
+      if (this.menuFormType === 'update') {
+        this.$refs.menuForm.setMenuFormValue({ ...this.editedMenu })
+      }
+    },
+    resetMenuForm() {
+      console.log('rest form')
+      this.$refs.menuForm.resetMenuForm()
     },
     submitMenuForm() {
-      this.$refs.menuForm.submitMenuForm()
-      this.menuDialogVisible = false
+      const success = () => {
+        this.$message.success('Success')
+        this.menuDialogVisible = false
+      }
+      const error = message => {
+        this.$message.error(message)
+      }
+
+      this.$refs.menuForm.submitMenuForm(success, error)
     }
   }
 }

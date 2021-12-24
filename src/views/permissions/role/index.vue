@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="openMenuFormDialog('add') ">新增菜单</el-button>
+    <el-button type="primary" @click="openRoleFormDialog('add') ">新增菜单</el-button>
     <el-divider />
     <el-table
       v-loading="tableLoading"
@@ -23,14 +23,15 @@
       />
       <el-table-column
         prop="createTime"
-        label="创建事件"
+        label="创建时间"
       />
       <el-table-column
         fixed="right"
         label="操作"
       >
         <template slot-scope="scope">
-          <el-button type="primary" size="mini">编辑</el-button>
+          <el-button type="primary" size="mini" @click="openUpdateRoleFormDialog(scope.row)">编辑</el-button>
+          <el-button type="danger" size="mini" @click="deleteRole(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -49,41 +50,41 @@
     <!--弹窗部分    -->
     <el-dialog
       title="提示"
-      :visible.sync="menuDialogVisible"
+      :visible.sync="roleDialogVisible"
       width="40%"
-      @opened="onMenuFormDialogOpened"
-      @closed="resetMenuForm"
+      @opened="onRoleFormDialogOpened"
+      @closed="resetRoleForm"
     >
-      <menu-form ref="menuForm" :menu-form-type="menuFormType" />
+      <role-form ref="roleForm" :role-form-type="roleFormType" />
       <h3 slot="title">
         <svg-icon icon-class="form" />
-        {{ menuFormType ==='add' ? '添加菜单':'编辑菜单' }}
+        {{ roleFormType ==='add' ? '添加角色':'编辑角色' }}
       </h3>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="menuDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="submitMenuForm">确 定</el-button>
+        <el-button @click="roleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitRoleForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import MenuForm from '@/views/permissions/menu/menu-form'
 import { getRoles } from '@/api/role'
+import RoleForm from '@/components/RoleForm'
 
 export default {
   name: 'Role',
-  components: { MenuForm },
+  components: { RoleForm },
   data() {
     return {
-      menuDialogVisible: false,
+      roleDialogVisible: false,
       currentPage: 1,
       pageSize: 10,
       total: 0,
       tableLoading: false,
       dataList: [],
-      menuFormType: 'add',
-      editedMenu: undefined
+      roleFormType: 'add',
+      editedRole: undefined
     }
   },
   created() {
@@ -104,10 +105,7 @@ export default {
         this.tableLoading = false
       })
     },
-    editRow(data) {
-      console.log(data)
-    },
-    deleteMenu(data) {
+    deleteRole(data) {
       console.log(data)
     },
     handleSizeChange(val) {
@@ -118,33 +116,34 @@ export default {
       this.currentPage = val
       this.fetchData()
     },
-    openMenuFormDialog(menuFormType) {
-      this.menuDialogVisible = true
-      this.menuFormType = menuFormType
+    openRoleFormDialog(roleFormType) {
+      this.roleDialogVisible = true
+      this.roleFormType = roleFormType
     },
-    openUpdateMenuFormDialog(data) {
-      this.editedMenu = data
-      this.openMenuFormDialog('update')
+    openUpdateRoleFormDialog(data) {
+      this.editedRole = data
+      this.openRoleFormDialog('update')
     },
-    onMenuFormDialogOpened() {
-      if (this.menuFormType === 'update') {
-        this.$refs.menuForm.setMenuFormValue({ ...this.editedMenu })
+    onRoleFormDialogOpened() {
+      if (this.roleFormType === 'update') {
+        this.$refs.roleForm.setRoleFormValue({ ...this.editedRole })
       }
     },
-    resetMenuForm() {
+    resetRoleForm() {
       console.log('rest form')
-      this.$refs.menuForm.resetMenuForm()
+      this.$refs.roleForm.resetRoleForm()
     },
-    submitMenuForm() {
+    submitRoleForm() {
       const success = () => {
         this.$message.success('Success')
-        this.menuDialogVisible = false
+        this.roleDialogVisible = false
+        this.refreshTableData()
       }
       const error = message => {
         this.$message.error(message)
       }
 
-      this.$refs.menuForm.submitMenuForm(success, error)
+      this.$refs.roleForm.submitRoleForm(success, error)
     }
   }
 }

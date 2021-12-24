@@ -7,3 +7,18 @@ export function getRoles(params) {
     params
   })
 }
+
+export function addRole(data) {
+  return request({
+    url: '/role',
+    method: 'post',
+    data
+  })
+}
+export function updateRole(data) {
+  return request({
+    url: '/role',
+    method: 'put',
+    data
+  })
+}

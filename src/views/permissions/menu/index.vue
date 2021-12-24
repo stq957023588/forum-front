@@ -149,6 +149,7 @@ export default {
       const success = () => {
         this.$message.success('Success')
         this.menuDialogVisible = false
+        this.resetMenuForm()
       }
       const error = message => {
         this.$message.error(message)

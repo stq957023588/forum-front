@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="menuForm" :model="menuForm" :rules="menuFormRules" class="login-form" auto-complete="on" label-position="left" label-width="auto">
+    <el-form ref="menuForm" :model="menuForm" :rules="menuFormRules" class="login-form" auto-complete="on" label-position="right" label-width="80px">
       <el-form-item prop="name" label="菜单名称">
         <el-input
           v-model="menuForm.name"

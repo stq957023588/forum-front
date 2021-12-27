@@ -1,5 +1,5 @@
 import { constantRoutes } from '@/router'
-import { getRoleMenus } from '@/api/menu'
+import { getRoleMenuTree } from '@/api/menu'
 import Layout from '@/layout'
 
 /**
@@ -48,7 +48,7 @@ const mutations = {
   }
 }
 
-const initDatabaseRoutes = menus => {
+export const initDatabaseRoutes = menus => {
   for (let i = 0; i < menus.length; i++) {
     const component = menus[i].component
     if (component === 'Layout') {
@@ -66,7 +66,7 @@ const initDatabaseRoutes = menus => {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise(resolve => {
-      getRoleMenus().then(response => {
+      getRoleMenuTree().then(response => {
         initDatabaseRoutes(response.data)
         let accessedRoutes
         console.log(response.data)

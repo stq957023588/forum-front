@@ -67,7 +67,7 @@
       <menu-form ref="menuForm" :menu-form-type="menuFormType" />
       <h3 slot="title">
         <svg-icon icon-class="form" />
-        {{ menuFormType ==='add' ? '添加菜单':'编辑菜单' }}
+        {{ menuFormType === 'add' ? '添加菜单' : '编辑菜单' }}
       </h3>
       <span slot="footer" class="dialog-footer">
         <el-button @click="menuDialogVisible = false">取 消</el-button>
@@ -78,8 +78,9 @@
 </template>
 
 <script>
-import { getMenus } from '@/api/menu'
+import { getMenus, deleteMenu } from '@/api/menu'
 import MenuForm from '@/views/permissions/menu/menu-form'
+import store from '@/store'
 
 export default {
   name: 'Menu',
@@ -97,10 +98,10 @@ export default {
     }
   },
   created() {
-    this.fetchData()
+    this.refreshTableData()
   },
   methods: {
-    fetchData() {
+    refreshTableData() {
       this.tableLoading = true
       const params = {
         pageNum: this.currentPage,
@@ -114,19 +115,30 @@ export default {
         this.tableLoading = false
       })
     },
-    editRow(data) {
-      console.log(data)
+    refreshMenuSidebar() {
+      // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
+      const roles = this.$store.getters.roles
+
+      // generate accessible routes map based on roles
+      store.dispatch('permission/generateRoutes', [...roles])
     },
-    deleteMenu(data) {
-      console.log(data)
+    deleteMenu(row) {
+      const data = [row.id]
+      deleteMenu(data).then(res => {
+        if (res.code === 20000) {
+          this.$message.success('成功')
+          this.refreshTableData()
+          this.refreshMenuSidebar()
+        }
+      })
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.fetchData()
+      this.refreshTableData()
     },
     handleCurrentChange(val) {
       this.currentPage = val
-      this.fetchData()
+      this.refreshTableData()
     },
     openMenuFormDialog(menuFormType) {
       this.menuDialogVisible = true
@@ -150,6 +162,7 @@ export default {
         this.$message.success('Success')
         this.menuDialogVisible = false
         this.resetMenuForm()
+        this.refreshMenuSidebar()
       }
       const error = message => {
         this.$message.error(message)
@@ -163,7 +176,7 @@ export default {
 
 <style scoped>
 /* el-divider 修改高度&虚线效果 */
-.el-divider--horizontal{
+.el-divider--horizontal {
   margin: 5px 0;
   background: 0 0;
   border-top: 1px #e8eaec;

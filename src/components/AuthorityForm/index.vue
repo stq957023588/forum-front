@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form ref="authorityForm" :model="authorityForm" :rules="authorityFormRules" class="login-form" auto-complete="on" label-position="left" label-width="auto">
+    <el-form ref="authorityForm" :model="authorityForm" :rules="authorityFormRules" class="login-form" auto-complete="on" label-position="right" label-width="80px">
       <el-form-item prop="name" label="名称">
         <el-input
           v-model="authorityForm.name"

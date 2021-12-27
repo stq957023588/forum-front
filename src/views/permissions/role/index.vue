@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { getRoles } from '@/api/role'
+import { getRoles, deleteRole } from '@/api/role'
 import RoleForm from '@/components/RoleForm'
 
 export default {
@@ -105,8 +105,14 @@ export default {
         this.tableLoading = false
       })
     },
-    deleteRole(data) {
-      console.log(data)
+    deleteRole(row) {
+      const data = [row.id]
+      deleteRole(data).then(res => {
+        if (res.code === 20000) {
+          this.$message.success('成功')
+          this.refreshTableData()
+        }
+      })
     },
     handleSizeChange(val) {
       this.pageSize = val

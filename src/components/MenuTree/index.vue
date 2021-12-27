@@ -11,6 +11,7 @@
       :props="defaultProps"
       default-expand-all
       node-key="id"
+      :show-checkbox="showCheckbox"
       :highlight-current="true"
       :check-on-click-node="true"
       :filter-node-method="filterNode"
@@ -23,6 +24,12 @@ import { getMenuTree } from '@/api/menu'
 
 export default {
   name: 'MenuTree',
+  props: {
+    showCheckbox: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       filterText: '',
@@ -55,6 +62,12 @@ export default {
     },
     getCurrentMenuNode() {
       return this.$refs.menuTree.getCurrentNode()
+    },
+    getCheckedNodes(leafOnly, includeHalfChecked) {
+      return this.$refs.menuTree.getCheckedNodes(leafOnly, includeHalfChecked)
+    },
+    setCheckedNodes(nodes) {
+      this.$refs.menuTree.setCheckedNodes(nodes)
     }
   }
 }

@@ -46,7 +46,8 @@
         <el-card v-if="selectedRole" class="box-card">
           <div slot="header" class="clearfix">
             <span>{{ selectedRole.name }}的权限</span>
-            <el-button style="float: right; padding: 3px 0" type="text" @click="openAuthorityTableDialog">添加权限</el-button>
+            <el-button style="float: right; padding: 3px 0" type="text" @click="openAuthorityTableDialog">添加权限
+            </el-button>
           </div>
           <el-table
             v-loading="roleAuthorityTableLoading"
@@ -67,6 +68,14 @@
               prop="description"
               label="描述"
             />
+            <el-table-column
+              fixed="right"
+              label="操作"
+            >
+              <template slot-scope="scope">
+                <el-button type="danger" size="mini" @click="deleteRoleAuthority(scope.row)">删除</el-button>
+              </template>
+            </el-table-column>
           </el-table>
           <el-divider />
           <div class="block">
@@ -88,15 +97,23 @@
       title="提示"
       :visible.sync="authorityTableDialogVisible"
       width="50%"
+      :destroy-on-close="true"
+      @opened="onAuthorityTableDialogOpened"
     >
-      <authority-table ref="authorityTable" :selectable="true" height="auto" max-height="500px" />
       <h3 slot="title">
         <svg-icon icon-class="table" />
         权限
       </h3>
+      <reverse-role-authority-table
+        ref="authorityTable"
+        :role-id="selectedRole ? selectedRole.id : -1"
+        :selectable="true"
+        height="auto"
+        max-height="500px"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button @click="authorityTableDialogVisible = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button type="primary" @click="addRoleAuthority">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -105,12 +122,12 @@
 <script>
 
 import { getRoles } from '@/api/role'
-import { getRoleAuthority } from '@/api/authority'
-import AuthorityTable from '@/components/AuthorityTable'
+import { getRoleAuthority, addRoleAuthority, deleteRoleAuthority } from '@/api/authority'
+import ReverseRoleAuthorityTable from '@/components/ReverseRoleAuthorityTable'
 
 export default {
   name: 'RoleAuthority',
-  components: { AuthorityTable },
+  components: { ReverseRoleAuthorityTable },
   data() {
     return {
       roleTableLoading: false,
@@ -142,6 +159,10 @@ export default {
         if (res.code === 20000) {
           this.roleTableDataList = res.data.list
           this.roleTotal = res.data.total
+          if (this.roleTableDataList.length > 0) {
+            this.selectedRole = this.roleTableDataList[0]
+            this.refreshRoleAuthorityTableData()
+          }
         }
         this.roleTableLoading = false
       })
@@ -182,13 +203,42 @@ export default {
       this.roleAuthorityPageSize = val
       this.refreshRoleAuthorityTableData()
     },
+    deleteRoleAuthority(row) {
+      const data = {
+        roleId: this.selectedRole.id,
+        authorities: [
+          {
+            id: row.id
+          }
+        ]
+      }
+      deleteRoleAuthority(data).then(res => {
+        if (res.code === 20000) {
+          this.$message.success('成功')
+          this.refreshRoleAuthorityTableData()
+        }
+      })
+    },
     // 权限表格弹窗部分
     openAuthorityTableDialog() {
       this.authorityTableDialogVisible = true
     },
+    onAuthorityTableDialogOpened() {
+      this.$refs.authorityTable.refreshTableData()
+    },
     addRoleAuthority() {
       const selectedRow = this.$refs.authorityTable.getSelectedRow()
-      console.log(selectedRow)
+      const data = {
+        roleId: this.selectedRole.id,
+        authorities: selectedRow
+      }
+      addRoleAuthority(data).then(res => {
+        if (res.code === 20000) {
+          this.$message.success('成功')
+          this.authorityTableDialogVisible = false
+          this.refreshRoleAuthorityTableData()
+        }
+      })
     }
   }
 }
@@ -196,7 +246,7 @@ export default {
 
 <style scoped>
 /* el-divider 修改高度&虚线效果 */
-.el-divider--horizontal{
+.el-divider--horizontal {
   margin: 3px 0;
   background: 0 0;
   border-top: 1px #e8eaec;

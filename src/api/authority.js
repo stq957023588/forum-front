@@ -32,3 +32,26 @@ export function addAuthority(data) {
   })
 }
 
+export function getReverseRoleAuthority(params) {
+  return request({
+    url: '/role-authority-reverse',
+    method: 'get',
+    params
+  })
+}
+
+export function addRoleAuthority(data) {
+  return request({
+    url: '/role-authority',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteRoleAuthority(data) {
+  return request({
+    url: '/role-authority',
+    method: 'delete',
+    data
+  })
+}

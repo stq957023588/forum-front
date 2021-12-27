@@ -55,11 +55,11 @@
   </div>
 </template>
 <script>
-import { getAuthorities } from '@/api/authority'
+import { getReverseRoleAuthority } from '@/api/authority'
 
 export default {
 
-  name: 'AuthorityTable',
+  name: 'ReverseRoleAuthorityTable',
   props: {
     selectable: {
       type: Boolean,
@@ -72,6 +72,10 @@ export default {
     maxHeight: {
       type: String,
       default: undefined
+    },
+    roleId: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -91,10 +95,11 @@ export default {
     refreshTableData() {
       this.tableLoading = true
       const params = {
+        roleId: this.roleId,
         pageNum: this.currentPage,
         pageSize: this.pageSize
       }
-      getAuthorities(params).then(res => {
+      getReverseRoleAuthority(params).then(res => {
         if (res.code === 20000) {
           this.dataList = res.data.list
           this.total = res.data.total
@@ -122,7 +127,7 @@ export default {
 
 <style scoped>
 /* el-divider 修改高度&虚线效果 */
-.el-divider--horizontal{
+.el-divider--horizontal {
   margin: 5px 0;
   background: 0 0;
   border-top: 1px #e8eaec;

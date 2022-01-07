@@ -73,7 +73,7 @@
 import MenuTree from '@/components/MenuTree'
 import { addMenu, updateMenu } from '@/api/menu'
 import { viewPaths } from '@/router'
-import { validPath } from '@/utils/validate'
+import { validPathDoNotContainsRoot } from '@/utils/validate'
 
 export default {
   name: 'MenuForm',
@@ -90,7 +90,7 @@ export default {
   },
   data() {
     const validatePath = (rule, value, callback) => {
-      if (!validPath(value)) {
+      if (!validPathDoNotContainsRoot(value)) {
         callback(new Error('路径不符合规则'))
       } else {
         callback()
@@ -104,7 +104,7 @@ export default {
       menuFormRules: {
         name: [
           { required: true, message: '菜单名不能为空', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 2, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
         ],
         component: [
           { required: true, message: '组件不能为空', trigger: 'blur' }
@@ -145,16 +145,19 @@ export default {
       this.autoUrl()
     },
     autoUrl() {
+      const component = this.viewPaths.find(item => item.path === this.menuForm.component)
+      console.log(this.viewPaths)
       this.menuForm.url = (this.parentMenu ? this.parentMenu.url : '') + '/' +
-           (this.menuForm && this.menuForm.name ? this.menuForm.name : '')
+           (component && component.name && component.name !== 'Layout' ? component.name : '')
     },
     submitMenuForm(success, error) {
       const submitMethod = this.menuFormType === 'add' ? addMenu : updateMenu
-
       this.$refs.menuForm.validate(valid => {
         if (valid) {
           submitMethod(this.menuForm).then(res => {
             if (res.code === 20000) {
+              // 此处是防止没有点击过上级菜单,菜单树未被渲染无法获取到,而导致刷新树报错
+              this.$refs.menuTree && this.$refs.menuTree.refreshTreeData()
               success && success()
             } else {
               error && error(res.message)

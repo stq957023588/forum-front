@@ -64,10 +64,10 @@
       @closed="resetAuthorityForm"
     >
       <authority-form ref="authorityForm" :authority-form-type="authorityFormType" />
-      <h3 slot="title">
+      <span slot="title">
         <svg-icon icon-class="form" />
         {{ authorityFormType ==='add' ? '添加权限':'编辑权限' }}
-      </h3>
+      </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="authorityDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitAuthorityForm">确 定</el-button>
@@ -112,6 +112,8 @@ export default {
           this.total = res.data.total
         }
         this.tableLoading = false
+      }).catch(e => {
+        this.tableLoading = false
       })
     },
     deleteAuthority(data) {
@@ -119,11 +121,11 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.fetchData()
+      this.refreshTableData()
     },
     handleCurrentChange(val) {
       this.currentPage = val
-      this.fetchData()
+      this.refreshTableData()
     },
     openAuthorityFormDialog(authorityFormType) {
       this.authorityDialogVisible = true

@@ -67,6 +67,7 @@
             <el-table-column
               prop="description"
               label="描述"
+              :show-overflow-tooltip="true"
             />
             <el-table-column
               fixed="right"
@@ -96,14 +97,14 @@
     <el-dialog
       title="提示"
       :visible.sync="authorityTableDialogVisible"
-      width="50%"
+      width="60%"
       :destroy-on-close="true"
       @opened="onAuthorityTableDialogOpened"
     >
-      <h3 slot="title">
+      <span slot="title">
         <svg-icon icon-class="table" />
         权限
-      </h3>
+      </span>
       <reverse-role-authority-table
         ref="authorityTable"
         :role-id="selectedRole ? selectedRole.id : -1"
@@ -165,6 +166,8 @@ export default {
           }
         }
         this.roleTableLoading = false
+      }).catch(e => {
+        this.roleTableLoading = false
       })
     },
     handleRoleTablePageNumChange(val) {
@@ -192,6 +195,8 @@ export default {
           this.roleAuthorityTableDataList = res.data.list
           this.roleAuthorityTotal = res.data.total
         }
+        this.roleAuthorityTableLoading = false
+      }).catch(e => {
         this.roleAuthorityTableLoading = false
       })
     },

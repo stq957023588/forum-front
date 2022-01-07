@@ -69,12 +69,12 @@ const actions = {
       getRoleMenuTree().then(response => {
         initDatabaseRoutes(response.data)
         let accessedRoutes
-        console.log(response.data)
         if (roles.includes('admin')) {
           accessedRoutes = response.data || []
         } else {
           accessedRoutes = filterAsyncRoutes(response.data, roles)
         }
+        accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
         commit('SET_ROUTES', accessedRoutes)
         resolve(accessedRoutes)
       })

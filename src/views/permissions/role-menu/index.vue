@@ -49,7 +49,7 @@
             <el-button style="float: right; padding: 3px 0" type="text" @click="saveRoleMenu">保存
             </el-button>
           </div>
-          <menu-tree ref="menuTree" :show-checkbox="true" />
+          <menu-tree ref="menuTree" :show-checkbox="true" :after-tree-data-init="refreshRoleMenuTree" />
         </el-card>
       </el-col>
     </el-row>
@@ -61,7 +61,7 @@
 import { getRoles } from '@/api/role'
 import { getRoleMenus, saveRoleMenus } from '@/api/menu'
 import MenuTree from '@/components/MenuTree'
-import store from '@/store'
+import { refreshRouter } from '@/router'
 
 export default {
   name: 'RoleMenu',
@@ -93,9 +93,10 @@ export default {
           this.roleTotal = res.data.total
           if (this.roleTableDataList.length > 0) {
             this.selectedRole = this.roleTableDataList[0]
-            this.refreshRoleMenuTree()
           }
         }
+        this.roleTableLoading = false
+      }).catch(e => {
         this.roleTableLoading = false
       })
     },
@@ -132,8 +133,7 @@ export default {
       saveRoleMenus(data).then(res => {
         if (res.code === 20000) {
           this.$message.success('成功')
-          const roles = this.$store.getters.roles
-          store.dispatch('permission/generateRoutes', [...roles])
+          refreshRouter()
         }
       })
     }

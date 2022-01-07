@@ -25,6 +25,10 @@ export function validEmail(email) {
 }
 
 export function validPath(path) {
-  const path_regex = /^(\/[\-a-zA-Z_0-9]+)+$/
+  const path_regex = /^(\/[\-a-zA-Z_0-9\\*]+)+$/
+  return path === '/' || path_regex.test(path)
+}
+export function validPathDoNotContainsRoot(path) {
+  const path_regex = /^(\/[\-a-zA-Z_0-9\\*]+)+$/
   return path_regex.test(path)
 }

@@ -30,3 +30,35 @@ export function deleteRole(data) {
     data
   })
 }
+
+export function getUserRoles(params) {
+  return request({
+    url: '/user-role',
+    method: 'get',
+    params
+  })
+}
+
+export function addUserRoles(data) {
+  return request({
+    url: '/user-role',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteUserRole(data) {
+  return request({
+    url: '/user-role',
+    method: 'delete',
+    data
+  })
+}
+
+export function getReverseUserRoles(params) {
+  return request({
+    url: '/reverse-user-role',
+    method: 'get',
+    params
+  })
+}

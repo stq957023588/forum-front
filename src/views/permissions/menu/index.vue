@@ -65,10 +65,10 @@
       @closed="resetMenuForm"
     >
       <menu-form ref="menuForm" :menu-form-type="menuFormType" />
-      <h3 slot="title">
+      <span slot="title">
         <svg-icon icon-class="form" />
         {{ menuFormType === 'add' ? '添加菜单' : '编辑菜单' }}
-      </h3>
+      </span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="menuDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitMenuForm">确 定</el-button>
@@ -79,8 +79,8 @@
 
 <script>
 import { getMenus, deleteMenu } from '@/api/menu'
-import MenuForm from '@/views/permissions/menu/menu-form'
-import store from '@/store'
+import MenuForm from '@/components/MenuForm'
+import { refreshRouter } from '@/router'
 
 export default {
   name: 'Menu',
@@ -113,14 +113,9 @@ export default {
           this.total = res.data.total
         }
         this.tableLoading = false
+      }).catch(e => {
+        this.tableLoading = false
       })
-    },
-    refreshMenuSidebar() {
-      // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-      const roles = this.$store.getters.roles
-
-      // generate accessible routes map based on roles
-      store.dispatch('permission/generateRoutes', [...roles])
     },
     deleteMenu(row) {
       const data = [row.id]
@@ -128,7 +123,7 @@ export default {
         if (res.code === 20000) {
           this.$message.success('成功')
           this.refreshTableData()
-          this.refreshMenuSidebar()
+          refreshRouter()
         }
       })
     },
@@ -161,8 +156,9 @@ export default {
       const success = () => {
         this.$message.success('Success')
         this.menuDialogVisible = false
+        this.refreshTableData()
         this.resetMenuForm()
-        this.refreshMenuSidebar()
+        refreshRouter()
       }
       const error = message => {
         this.$message.error(message)

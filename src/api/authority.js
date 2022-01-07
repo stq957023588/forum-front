@@ -55,3 +55,11 @@ export function deleteRoleAuthority(data) {
     data
   })
 }
+
+export function limitedAuthority(params) {
+  return request({
+    url: '/limited-authority',
+    method: 'get',
+    params
+  })
+}

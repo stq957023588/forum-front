@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form ref="roleForm" :model="roleForm" :rules="roleFormRules" class="login-form" auto-complete="on" label-position="right" label-width="80px">
-      <el-form-item prop="name" label="菜单名称">
+      <el-form-item prop="name" label="角色名称">
         <el-input
           v-model="roleForm.name"
           placeholder="名称"
@@ -43,7 +43,7 @@ export default {
       roleFormRules: {
         name: [
           { required: true, message: '菜单名不能为空', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
         ]
       },
       roleForm: {

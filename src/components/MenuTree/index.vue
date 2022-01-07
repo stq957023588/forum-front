@@ -28,6 +28,11 @@ export default {
     showCheckbox: {
       type: Boolean,
       default: false
+    },
+    afterTreeDataInit: {
+      type: Function,
+      default: () => {
+      }
     }
   },
   data() {
@@ -53,6 +58,7 @@ export default {
       getMenuTree().then(res => {
         if (res.code === 20000) {
           this.treeData = res.data
+          this.afterTreeDataInit && this.afterTreeDataInit()
         }
       })
     },

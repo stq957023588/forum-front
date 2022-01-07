@@ -22,3 +22,18 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function addUser(data) {
+  return request({
+    url: '/user',
+    method: 'post',
+    data
+  })
+}
+export function getUsers(params) {
+  return request({
+    url: '/user',
+    method: 'get',
+    params
+  })
+}

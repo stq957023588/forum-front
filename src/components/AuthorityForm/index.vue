@@ -68,7 +68,7 @@ export default {
       authorityFormRules: {
         name: [
           { required: true, message: '菜单名不能为空', trigger: 'blur' },
-          { min: 2, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 2, max: 8, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
         url: [
           { required: true, validator: validatePath, trigger: 'blur' }

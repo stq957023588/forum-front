@@ -25,14 +25,17 @@
       <el-table-column
         prop="description"
         label="描述"
+        :show-overflow-tooltip="true"
       />
       <el-table-column
         prop="url"
         label="URL"
+        :show-overflow-tooltip="true"
       />
       <el-table-column
         prop="method"
         label="方法"
+        width="80px"
       />
       <el-table-column
         prop="createTime"

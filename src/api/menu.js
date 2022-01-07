@@ -61,3 +61,12 @@ export function saveRoleMenus(data) {
     data
   })
 }
+
+export function getLimitedMenu(params) {
+  return request({
+    url: '/limited-menu',
+    method: 'get',
+    params
+  })
+}
+

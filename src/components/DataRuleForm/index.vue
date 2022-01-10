@@ -55,6 +55,7 @@
 <script>
 
 import { addDataRule, updateDataRule } from '@/api/dataRule'
+import { getDict } from '@/api/dict'
 
 export default {
   name: 'DataRuleForm',
@@ -70,11 +71,7 @@ export default {
   },
   data() {
     return {
-      conditionList: [
-        { value: '1', label: '大于' },
-        { value: '2', label: '等于' },
-        { value: '3', label: '小于' }
-      ],
+      conditionList: [],
       formRules: {
         name: [
           { required: true, message: '名称不能为空', trigger: 'blur' },
@@ -85,9 +82,6 @@ export default {
         ],
         condition: [
           { required: true, message: '条件不能为空', trigger: 'blur' }
-        ],
-        value: [
-          { required: true, message: '值不能为空', trigger: 'blur' }
         ]
       },
       formData: {
@@ -99,9 +93,21 @@ export default {
     }
   },
   created() {
-
+    this.getConditionList()
   },
   methods: {
+    getConditionList() {
+      const params = {
+        dictType: '4',
+        pageSize: 0
+      }
+      getDict(params).then(res => {
+        if (res.code === 20000) {
+          this.conditionList = res.data.list
+        }
+      })
+    },
+
     submitForm(success, error) {
       const submitMethod = this.formType === 'add' ? addDataRule : updateDataRule
       this.$refs.form.validate(valid => {

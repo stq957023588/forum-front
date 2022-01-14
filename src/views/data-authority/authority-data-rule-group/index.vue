@@ -11,9 +11,9 @@
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card v-if="selectedAuthority" class="box-card">
+        <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span>{{ selectedAuthority.name }}的数据规则组</span>
+            <span>{{ selectedAuthority ? selectedAuthority.name + '的' : '' }}数据规则组</span>
             <el-button style="float: right; padding: 3px 0" type="text" @click="openAuthorityDataRuleGroupSelectTableDialog">添加数据规则组 </el-button>
           </div>
           <authority-data-rule-group-table

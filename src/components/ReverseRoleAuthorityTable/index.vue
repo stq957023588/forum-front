@@ -112,11 +112,11 @@ export default {
     },
     handleSizeChange(val) {
       this.pageSize = val
-      this.fetchData()
+      this.refreshTableData()
     },
     handleCurrentChange(val) {
       this.currentPage = val
-      this.fetchData()
+      this.refreshTableData()
     },
     getSelectedRow() {
       return this.selectedRow

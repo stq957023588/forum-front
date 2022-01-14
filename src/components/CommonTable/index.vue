@@ -28,6 +28,7 @@
         :current-page="currentPage"
         :page-sizes="[5, 10, 20, 30, 40]"
         :page-size="pageSize"
+        :pager-count="5"
         layout="total, sizes, prev, pager, next, jumper"
         :total="total"
         @size-change="handleSizeChange"
@@ -60,6 +61,10 @@ export default {
     tableDataRequestParams: {
       type: Object,
       default: () => {}
+    },
+    afterTableDataRequest: {
+      type: Function,
+      default: undefined
     },
     tableColumns: {
       type: Array,
@@ -103,6 +108,7 @@ export default {
         if (res.code === 20000) {
           this.dataList = res.data.list
           this.total = res.data.total
+          this.afterTableDataRequest && this.afterTableDataRequest(res.data)
         }
         this.tableLoading = false
       }).catch(e => {
